@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantID - Профиль</title>
+    <title>PlantID - Өсімдік сканерлеу</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,6 +12,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0fdf4, #f0f9ff);
+            min-height: 100vh;
         }
         
         .card {
@@ -73,38 +74,6 @@
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
         
-        .input-error {
-            border-color: #ef4444;
-        }
-        
-        .tab-active {
-            border-bottom: 2px solid #10b981;
-            color: #10b981;
-        }
-        
-        .tab-inactive {
-            border-bottom: 2px solid transparent;
-            color: #6b7280;
-        }
-        
-        .tab-inactive:hover {
-            color: #374151;
-            border-color: #d1d5db;
-        }
-        
-        .avatar {
-            width: 96px;
-            height: 96px;
-            background-color: #dcfce7;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: #166534;
-        }
-        
         .notification {
             position: fixed;
             top: 20px;
@@ -130,6 +99,132 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+        
+        .camera-grid {
+            position: absolute;
+            inset: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            pointer-events: none;
+        }
+        
+        .camera-grid > div {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .camera-instruction {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 300px;
+            pointer-events: none;
+        }
+        
+        .camera-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: black;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 10;
+        }
+        
+        .camera-preview {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .camera-footer {
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .capture-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .capture-button-inner {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 4px solid black;
+            background: black;
+        }
+        
+        .camera-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 16px;
+            z-index: 20;
+        }
+        
+        .camera-control {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .camera-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -146,13 +241,13 @@
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Басты бет
                         </a>
-                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="#" class="border-green-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Сканерлеу
                         </a>
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Тарих
                         </a>
-                        <a href="#" class="border-green-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Профиль
                         </a>
                     </div>
@@ -178,208 +273,250 @@
         </div>
     </nav>
 
+    <!-- Camera Overlay -->
+    <div id="cameraOverlay" class="camera-overlay hidden">
+        <div class="camera-header">
+            <button id="closeCamera" class="p-2 hover:bg-white/20 rounded-full text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h2 class="text-lg font-semibold">📱 Өсімдік фотосын түсіру</h2>
+            <button id="switchCamera" class="p-2 hover:bg-white/20 rounded-full text-white">
+                <i class="fas fa-sync-alt text-xl"></i>
+            </button>
+        </div>
+        
+        <div class="camera-preview">
+            <video id="cameraPreview" autoplay playsinline muted class="w-full h-full object-cover"></video>
+            <div class="camera-grid"></div>
+            <div class="camera-instruction">
+                <i class="fas fa-camera text-2xl mb-2"></i>
+                <p class="font-medium">🌿 Өсімдікті кадрға алыңыз</p>
+                <p class="text-xs opacity-80 mt-1">Жапырақтар анық көрінуі керек</p>
+            </div>
+        </div>
+        
+        <div class="camera-footer">
+            <button id="captureButton" class="capture-button">
+                <div class="capture-button-inner"></div>
+            </button>
+        </div>
+        
+        <div class="camera-controls">
+            <button id="retakeButton" class="camera-control hidden">
+                <i class="fas fa-redo text-xl"></i>
+            </button>
+            <button id="confirmButton" class="camera-control hidden">
+                <i class="fas fa-check text-xl"></i>
+            </button>
+        </div>
+        
+        <canvas id="cameraCanvas" class="hidden"></canvas>
+    </div>
+
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Success Message -->
-        <div id="successMessage" class="bg-green-50 border border-green-200 rounded-lg p-3 mb-6 hidden">
-            <p class="text-green-600 text-sm">Профиль сәтті жаңартылды!</p>
-        </div>
+        <!-- Results Section (Initially Hidden) -->
+        <div id="resultsSection" class="space-y-6 hidden">
+            <div class="card border-0 shadow-lg">
+                <div class="p-6">
+                    <h1 class="text-2xl font-bold text-green-600 mb-2">🎉 Өсімдік анықталды!</h1>
+                    <p class="text-gray-600 mb-6">AI арқылы анықталған ақпарат</p>
 
-        <!-- Profile Card -->
-        <div class="card border-0 shadow-lg">
-            <!-- Tabs -->
-            <div class="border-b border-gray-200">
-                <nav class="flex space-x-8 px-6 pt-6">
-                    <button id="profileTab" class="tab-active pb-4 px-1 border-b-2 font-medium text-sm">
-                        Жеке ақпарат
-                    </button>
-                    <button id="passwordTab" class="tab-inactive pb-4 px-1 border-b-2 font-medium text-sm">
-                        Құпия сөз
-                    </button>
-                </nav>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="relative h-64 rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                id="resultImage"
+                                src=""
+                                alt="Scanned plant"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 id="plantName" class="text-2xl font-bold text-gray-800">Қызылша</h3>
+                                <p id="scientificName" class="text-lg text-gray-600 italic">Beta vulgaris</p>
+                            </div>
+                            <p id="plantDescription" class="text-gray-700 leading-relaxed">Қызылша - көпжылдық шөптесін өсімдік. Оның тамыры қызыл түсті болып келеді, дәмі тәтті. Қызылша витаминге, минералдарға және антиоксиданттарға бай.</p>
+                            <div class="flex items-center gap-2">
+                                <span id="accuracyBadge" class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">96% дәлдік</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tab Content -->
-            <div class="p-6">
-                <!-- Profile Tab Content -->
-                <div id="profileContent">
-                    <h2 class="text-xl font-semibold mb-2">Жеке ақпарат</h2>
-                    <p class="text-gray-600 mb-6">Өз ақпараттарыңызды басқарыңыз</p>
-
-                    <form id="profileForm" class="space-y-6">
-                        <!-- Avatar Section -->
-                        <div class="flex flex-col items-center space-y-4">
-                            <div class="avatar">
-                                Қ
-                            </div>
-                            <div class="text-center">
-                                <button type="button" class="btn btn-secondary">
-                                    <i class="fas fa-camera mr-2"></i>
-                                    Сурет өзгерту
-                                </button>
-                                <input type="file" accept="image/*" class="hidden">
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label for="fullName" class="block text-sm font-medium text-gray-700">
-                                    Толық аты
-                                </label>
-                                <div class="relative">
-                                    <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
-                                    <input
-                                        id="fullName"
-                                        name="fullName"
-                                        type="text"
-                                        required
-                                        placeholder="Атыңыз мен тегіңіз"
-                                        value="Қолданушы Аты"
-                                        class="input pl-10"
-                                    />
-                                </div>
-                                <p id="fullNameError" class="text-sm text-red-600 hidden"></p>
-                            </div>
-
-                            <div class="space-y-2">
-                                <label for="email" class="block text-sm font-medium text-gray-700">
-                                    Email
-                                </label>
-                                <div class="relative">
-                                    <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        required
-                                        placeholder="example@email.com"
-                                        value="user@example.com"
-                                        class="input pl-10"
-                                    />
-                                </div>
-                                <p id="emailError" class="text-sm text-red-600 hidden"></p>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-full">
-                            <i class="fas fa-save mr-2"></i>
-                            Өзгерістерді сақтау
-                        </button>
-                    </form>
+            <!-- Plant Care Information -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card border-0 shadow-md p-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-map-marker-alt text-blue-600"></i>
+                        <h4 class="font-semibold text-gray-800">Шығу тегі</h4>
+                    </div>
+                    <p id="plantOrigin" class="text-gray-600">Орталық және Батыс Еуропа</p>
                 </div>
 
-                <!-- Password Tab Content -->
-                <div id="passwordContent" class="hidden">
-                    <h2 class="text-xl font-semibold mb-2">Құпия сөзді өзгерту</h2>
-                    <p class="text-gray-600 mb-6">Аккаунтыңыздың қауіпсіздігі үшін күшті құпия сөз қолданыңыз</p>
-
-                    <form id="passwordForm" class="space-y-6">
-                        <div class="space-y-2">
-                            <label for="currentPassword" class="block text-sm font-medium text-gray-700">
-                                Ағымдағы құпия сөз
-                            </label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
-                                <input
-                                    id="currentPassword"
-                                    name="currentPassword"
-                                    type="password"
-                                    required
-                                    placeholder="Ағымдағы құпия сөзіңіз"
-                                    class="input pl-10 pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                                    onclick="togglePassword('currentPassword')"
-                                >
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                            <p id="currentPasswordError" class="text-sm text-red-600 hidden"></p>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label for="newPassword" class="block text-sm font-medium text-gray-700">
-                                Жаңа құпия сөз
-                            </label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
-                                <input
-                                    id="newPassword"
-                                    name="newPassword"
-                                    type="password"
-                                    required
-                                    placeholder="Жаңа құпия сөзіңіз"
-                                    class="input pl-10 pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                                    onclick="togglePassword('newPassword')"
-                                >
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                            <p id="newPasswordError" class="text-sm text-red-600 hidden"></p>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
-                                Жаңа құпия сөзді растау
-                            </label>
-                            <div class="relative">
-                                <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
-                                <input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    required
-                                    placeholder="Жаңа құпия сөзді қайталаңыз"
-                                    class="input pl-10 pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                                    onclick="togglePassword('confirmPassword')"
-                                >
-                                    <i class="far fa-eye"></i>
-                                </button>
-                            </div>
-                            <p id="confirmPasswordError" class="text-sm text-red-600 hidden"></p>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-full">
-                            <i class="fas fa-lock mr-2"></i>
-                            Құпия сөзді өзгерту
-                        </button>
-                    </form>
+                <div class="card border-0 shadow-md p-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-sun text-yellow-600"></i>
+                        <h4 class="font-semibold text-gray-800">Жарық</h4>
+                    </div>
+                    <p id="plantSunlight" class="text-gray-600">Толық күн сәулесі</p>
                 </div>
+
+                <div class="card border-0 shadow-md p-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-tint text-blue-600"></i>
+                        <h4 class="font-semibold text-gray-800">Суару</h4>
+                    </div>
+                    <p id="plantWater" class="text-gray-600">Орташа, топырақ ылғалды болуы керек</p>
+                </div>
+
+                <div class="card border-0 shadow-md p-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-seedling text-green-600"></i>
+                        <h4 class="font-semibold text-gray-800">Өсу қарқыны</h4>
+                    </div>
+                    <p id="plantGrowth" class="text-gray-600">Орташа, 50-60 күнде піседі</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="newScanButton" class="btn btn-primary">
+                    <i class="fas fa-camera mr-2"></i>
+                    Жаңа сканерлеу
+                </button>
+                <button id="viewHistoryButton" class="btn btn-secondary">
+                    <i class="fas fa-history mr-2"></i>
+                    Тарихты қарау
+                </button>
             </div>
         </div>
 
-        <!-- Account Stats -->
-        <div class="card border-0 shadow-lg mt-8">
-            <div class="p-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <i class="fas fa-leaf text-green-600"></i>
-                    <h2 class="text-xl font-semibold">Аккаунт статистикасы</h2>
+        <!-- Scan Section (Initially Visible) -->
+        <div id="scanSection" class="space-y-6">
+            <!-- Upload Section -->
+            <div class="card border-0 shadow-lg">
+                <div class="p-6 text-center">
+                    <h1 class="text-2xl font-bold mb-2">Өсімдік суретін жүктеңіз</h1>
+                    <p class="text-gray-600 mb-6">Өсімдіктің анық суретін таңдаңыз, түсіріңіз немесе жүктеңіз</p>
+
+                    <div id="errorMessage" class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 hidden">
+                        <p id="errorText" class="text-red-600 text-sm"></p>
+                    </div>
+
+                    <div id="scanningMessage" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 hidden">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="loading-spinner"></div>
+                            <p class="text-blue-600 font-medium">🤖 AI өсімдікті анықтауда...</p>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="previewSection" class="space-y-4 hidden">
+                        <div class="relative w-full h-64 md:h-80 rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                id="previewImage"
+                                src=""
+                                alt="Selected plant"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div class="flex gap-4 justify-center">
+                            <button id="scanButton" class="btn btn-primary">
+                                <i class="fas fa-camera mr-2"></i>
+                                Өсімдікті анықтау
+                            </button>
+                            <button id="newImageButton" class="btn btn-secondary">
+                                Басқа сурет таңдау
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Options -->
+                    <div id="uploadOptions">
+                        <!-- Camera Button -->
+                        <div class="mb-6">
+                            <button
+                                id="openCameraButton"
+                                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 px-6 rounded-lg text-lg font-semibold shadow-lg flex items-center justify-center gap-3"
+                            >
+                                <i class="fas fa-camera"></i>📱 Телефон камерасынан түсіру
+                            </button>
+                            <p class="text-center text-sm text-gray-500 mt-2">
+                                Тікелей камерадан фото түсіріп, автоматты анықтау
+                            </p>
+                        </div>
+
+                        <!-- File Upload Options -->
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <!-- File Upload -->
+                            <div
+                                id="fileUpload"
+                                class="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                            >
+                                <i class="fas fa-upload text-blue-600 text-3xl mx-auto mb-4"></i>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Файл жүктеу</h3>
+                                <p class="text-gray-600 text-sm">Галереядан немесе компьютерден сурет таңдаңыз</p>
+                                <p class="text-xs text-gray-400 mt-2">PNG, JPG, JPEG (макс. 5MB)</p>
+                                <input type="file" id="fileInput" accept="image/*" class="hidden">
+                            </div>
+
+                            <!-- Drag & Drop -->
+                            <div
+                                id="dragDrop"
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors"
+                            >
+                                <i class="fas fa-mobile-alt text-gray-400 text-3xl mx-auto mb-4"></i>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Drag & Drop</h3>
+                                <p class="text-gray-600 text-sm">Суретті осы жерге тартып апарыңыз</p>
+                                <p class="text-xs text-gray-400 mt-2">Жылдам және ыңғайлы</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="text-center p-4 bg-green-50 rounded-lg">
-                        <p class="text-2xl font-bold text-green-600">24</p>
-                        <p class="text-sm text-gray-600">Жалпы сканерлеу</p>
-                    </div>
-                    <div class="text-center p-4 bg-blue-50 rounded-lg">
-                        <p class="text-2xl font-bold text-blue-600">7</p>
-                        <p class="text-sm text-gray-600">Осы аптада</p>
-                    </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg">
-                        <p class="text-2xl font-bold text-purple-600">95%</p>
-                        <p class="text-sm text-gray-600">Орташа дәлдік</p>
-                    </div>
-                    <div class="text-center p-4 bg-orange-50 rounded-lg">
-                        <p class="text-2xl font-bold text-orange-600">15</p>
-                        <p class="text-sm text-gray-600">Түрлі өсімдік</p>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="card border-0 shadow-lg">
+                <div class="p-6">
+                    <h2 class="text-lg font-semibold mb-4">📸 Жақсы фото түсіру үшін кеңестер</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-camera text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Анық сурет</h4>
+                                <p class="text-sm text-gray-600">Өсімдік анық көрінетін сурет түсіріңіз</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-sun text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Жақсы жарық</h4>
+                                <p class="text-sm text-gray-600">Табиғи жарықта сурет түсіру дұрысырақ</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-mobile-alt text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Камера режимі</h4>
+                                <p class="text-sm text-gray-600">Тікелей камерадан түсіру жылдамырақ</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Автоматты анықтау</h4>
+                                <p class="text-sm text-gray-600">Фото түсірген соң автоматты сканерленеді</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -387,141 +524,52 @@
     </main>
 
     <script>
-        // Tab switching functionality
-        document.getElementById('profileTab').addEventListener('click', () => {
-            document.getElementById('profileContent').classList.remove('hidden');
-            document.getElementById('passwordContent').classList.add('hidden');
-            document.getElementById('profileTab').classList.add('tab-active');
-            document.getElementById('profileTab').classList.remove('tab-inactive');
-            document.getElementById('passwordTab').classList.add('tab-inactive');
-            document.getElementById('passwordTab').classList.remove('tab-active');
-        });
+        // DOM Elements
+        const cameraOverlay = document.getElementById('cameraOverlay');
+        const cameraPreview = document.getElementById('cameraPreview');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const openCameraButton = document.getElementById('openCameraButton');
+        const closeCameraButton = document.getElementById('closeCamera');
+        const switchCameraButton = document.getElementById('switchCamera');
+        const captureButton = document.getElementById('captureButton');
+        const retakeButton = document.getElementById('retakeButton');
+        const confirmButton = document.getElementById('confirmButton');
+        const fileInput = document.getElementById('fileInput');
+        const fileUpload = document.getElementById('fileUpload');
+        const dragDrop = document.getElementById('dragDrop');
+        const scanButton = document.getElementById('scanButton');
+        const newImageButton = document.getElementById('newImageButton');
+        const newScanButton = document.getElementById('newScanButton');
+        const viewHistoryButton = document.getElementById('viewHistoryButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const scanningMessage = document.getElementById('scanningMessage');
+        const previewSection = document.getElementById('previewSection');
+        const previewImage = document.getElementById('previewImage');
+        const uploadOptions = document.getElementById('uploadOptions');
+        const scanSection = document.getElementById('scanSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultImage = document.getElementById('resultImage');
+        const plantName = document.getElementById('plantName');
+        const scientificName = document.getElementById('scientificName');
+        const plantDescription = document.getElementById('plantDescription');
+        const accuracyBadge = document.getElementById('accuracyBadge');
+        const plantOrigin = document.getElementById('plantOrigin');
+        const plantSunlight = document.getElementById('plantSunlight');
+        const plantWater = document.getElementById('plantWater');
+        const plantGrowth = document.getElementById('plantGrowth');
         
-        document.getElementById('passwordTab').addEventListener('click', () => {
-            document.getElementById('passwordContent').classList.remove('hidden');
-            document.getElementById('profileContent').classList.add('hidden');
-            document.getElementById('passwordTab').classList.add('tab-active');
-            document.getElementById('passwordTab').classList.remove('tab-inactive');
-            document.getElementById('profileTab').classList.add('tab-inactive');
-            document.getElementById('profileTab').classList.remove('tab-active');
-        });
+        // State
+        let stream = null;
+        let facingMode = 'environment';
+        let capturedImage = null;
+        let isScanning = false;
         
-        // Toggle password visibility
-        function togglePassword(fieldId) {
-            const field = document.getElementById(fieldId);
-            const icon = field.nextElementSibling.querySelector('i');
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                field.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
+        // Check if mobile
+        function isMobileDevice() {
+            return window.innerWidth <= 768 || 
+                   /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
-        
-        // Form validation and submission
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let isValid = true;
-            
-            // Reset errors
-            document.querySelectorAll('.text-red-600').forEach(el => {
-                el.classList.add('hidden');
-            });
-            
-            // Validate full name
-            const fullName = document.getElementById('fullName').value;
-            if (!fullName.trim()) {
-                document.getElementById('fullNameError').textContent = 'Толық атыңызды енгізіңіз';
-                document.getElementById('fullNameError').classList.remove('hidden');
-                isValid = false;
-            }
-            
-            // Validate email
-            const email = document.getElementById('email').value;
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email.trim()) {
-                document.getElementById('emailError').textContent = 'Email мекенжайын енгізіңіз';
-                document.getElementById('emailError').classList.remove('hidden');
-                isValid = false;
-            } else if (!emailPattern.test(email)) {
-                document.getElementById('emailError').textContent = 'Дұрыс email мекенжайын енгізіңіз';
-                document.getElementById('emailError').classList.remove('hidden');
-                isValid = false;
-            }
-            
-            if (isValid) {
-                // Simulate API call
-                showNotification('Профиль сәтті жаңартылды!', 'success');
-                document.getElementById('successMessage').classList.remove('hidden');
-                
-                // Hide success message after 3 seconds
-                setTimeout(() => {
-                    document.getElementById('successMessage').classList.add('hidden');
-                }, 3000);
-            }
-        });
-        
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let isValid = true;
-            
-            // Reset errors
-            document.querySelectorAll('.text-red-600').forEach(el => {
-                el.classList.add('hidden');
-            });
-            
-            // Validate current password
-            const currentPassword = document.getElementById('currentPassword').value;
-            if (!currentPassword) {
-                document.getElementById('currentPasswordError').textContent = 'Ағымдағы құпия сөзді енгізіңіз';
-                document.getElementById('currentPasswordError').classList.remove('hidden');
-                isValid = false;
-            }
-            
-            // Validate new password
-            const newPassword = document.getElementById('newPassword').value;
-            if (!newPassword) {
-                document.getElementById('newPasswordError').textContent = 'Жаңа құпия сөзді енгізіңіз';
-                document.getElementById('newPasswordError').classList.remove('hidden');
-                isValid = false;
-            } else if (newPassword.length < 6) {
-                document.getElementById('newPasswordError').textContent = 'Құпия сөз кемінде 6 таңбадан тұруы керек';
-                document.getElementById('newPasswordError').classList.remove('hidden');
-                isValid = false;
-            }
-            
-            // Validate confirm password
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            if (!confirmPassword) {
-                document.getElementById('confirmPasswordError').textContent = 'Жаңа құпия сөзді растаңыз';
-                document.getElementById('confirmPasswordError').classList.remove('hidden');
-                isValid = false;
-            } else if (newPassword !== confirmPassword) {
-                document.getElementById('confirmPasswordError').textContent = 'Құпия сөздер сәйкес келмейді';
-                document.getElementById('confirmPasswordError').classList.remove('hidden');
-                isValid = false;
-            }
-            
-            if (isValid) {
-                // Simulate API call
-                showNotification('Құпия сөз сәтті өзгертілді!', 'success');
-                
-                // Clear form
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                
-                // Reset eye icons
-                document.querySelectorAll('#passwordForm button i').forEach(icon => {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                });
-            }
-        });
         
         // Show notification
         function showNotification(message, type) {
@@ -535,6 +583,224 @@
                 notification.remove();
             }, 3000);
         }
+        
+        // Show error message
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+        
+        // Hide error message
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+        
+        // Start camera
+        async function startCamera() {
+            try {
+                hideError();
+                
+                const constraints = {
+                    video: {
+                        facingMode: facingMode,
+                        width: { ideal: 1920, max: 1920 },
+                        height: { ideal: 1080, max: 1080 }
+                    }
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                cameraPreview.srcObject = stream;
+            } catch (err) {
+                console.error('Camera error:', err);
+                showError('📱 Камераға қол жеткізу мүмкін емес. Браузер параметрлерінде камера рұқсатын беріңіз.');
+            }
+        }
+        
+        // Stop camera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+        
+        // Capture photo
+        function capturePhoto() {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraPreview.videoWidth;
+            cameraCanvas.height = cameraPreview.videoHeight;
+            
+            context.drawImage(cameraPreview, 0, 0, cameraCanvas.width, cameraCanvas.height);
+            
+            capturedImage = cameraCanvas.toDataURL('image/jpeg');
+            
+            // Show controls
+            retakeButton.classList.remove('hidden');
+            confirmButton.classList.remove('hidden');
+        }
+        
+        // Confirm photo
+        function confirmPhoto() {
+            if (capturedImage) {
+                // Set preview image
+                previewImage.src = capturedImage;
+                previewSection.classList.remove('hidden');
+                uploadOptions.classList.add('hidden');
+                
+                // Close camera
+                stopCamera();
+                cameraOverlay.classList.add('hidden');
+                
+                // Auto scan
+                simulateScan(capturedImage);
+            }
+        }
+        
+        // Retake photo
+        function retakePhoto() {
+            capturedImage = null;
+            retakeButton.classList.add('hidden');
+            confirmButton.classList.add('hidden');
+            startCamera();
+        }
+        
+        // Switch camera
+        function switchCamera() {
+            stopCamera();
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            startCamera();
+        }
+        
+        // Simulate scan
+        function simulateScan(imageSrc) {
+            // Show scanning message
+            scanningMessage.classList.remove('hidden');
+            scanButton.disabled = true;
+            
+            // Simulate API delay
+            setTimeout(() => {
+                scanningMessage.classList.add('hidden');
+                
+                // Set result data
+                resultImage.src = imageSrc;
+                plantName.textContent = 'Қызылша';
+                scientificName.textContent = 'Beta vulgaris';
+                plantDescription.textContent = 'Қызылша - көпжылдық шөптесін өсімдік. Оның тамыры қызыл түсті болып келеді, дәмі тәтті. Қызылша витаминге, минералдарға және антиоксиданттарға бай. Ол қан қысымын төмендетуге, атлетикалық өнімділікті арттыруға және қабынуды азайтуға көмектеседі.';
+                accuracyBadge.textContent = '96% дәлдік';
+                plantOrigin.textContent = 'Орталық және Батыс Еуропа';
+                plantSunlight.textContent = 'Толық күн сәулесі';
+                plantWater.textContent = 'Орташа, топырақ ылғалды болуы керек';
+                plantGrowth.textContent = 'Орташа, 50-60 күнде піседі';
+                
+                // Show results
+                scanSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+            }, 3000);
+        }
+        
+        // Event Listeners
+        openCameraButton.addEventListener('click', async () => {
+            cameraOverlay.classList.remove('hidden');
+            await startCamera();
+        });
+        
+        closeCameraButton.addEventListener('click', () => {
+            stopCamera();
+            cameraOverlay.classList.add('hidden');
+        });
+        
+        switchCameraButton.addEventListener('click', switchCamera);
+        
+        captureButton.addEventListener('click', () => {
+            capturePhoto();
+        });
+        
+        retakeButton.addEventListener('click', retakePhoto);
+        
+        confirmButton.addEventListener('click', confirmPhoto);
+        
+        fileUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Файл өлшемі 5MB-тан аспауы керек');
+                    return;
+                }
+                
+                if (!file.type.startsWith('image/')) {
+                    showError('Тек сурет файлдары ғана қабылданады');
+                    return;
+                }
+                
+                previewImage.src = URL.createObjectURL(file);
+                previewSection.classList.remove('hidden');
+                uploadOptions.classList.add('hidden');
+                hideError();
+            }
+        });
+        
+        dragDrop.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragDrop.classList.add('border-green-400');
+        });
+        
+        dragDrop.addEventListener('dragleave', () => {
+            dragDrop.classList.remove('border-green-400');
+        });
+        
+        dragDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragDrop.classList.remove('border-green-400');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                previewImage.src = URL.createObjectURL(file);
+                previewSection.classList.remove('hidden');
+                uploadOptions.classList.add('hidden');
+                hideError();
+            }
+        });
+        
+        scanButton.addEventListener('click', () => {
+            simulateScan(previewImage.src);
+        });
+        
+        newImageButton.addEventListener('click', () => {
+            previewSection.classList.add('hidden');
+            uploadOptions.classList.remove('hidden');
+            fileInput.value = '';
+        });
+        
+        newScanButton.addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            scanSection.classList.remove('hidden');
+            previewSection.classList.add('hidden');
+            uploadOptions.classList.remove('hidden');
+            fileInput.value = '';
+        });
+        
+        viewHistoryButton.addEventListener('click', () => {
+            // In a real app, this would navigate to history page
+            showNotification('Тарих бетіне өту...', 'success');
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set canvas size
+            cameraCanvas.width = window.innerWidth;
+            cameraCanvas.height = window.innerHeight;
+            
+            // Check if mobile and update button text
+            if (isMobileDevice()) {
+                openCameraButton.innerHTML = '<i class="fas fa-camera"></i>📱 Телефон камерасынан түсіру';
+            } else {
+                openCameraButton.innerHTML = '<i class="fas fa-camera"></i>🌐 Веб камерасынан түсіру';
+            }
+        });
     </script>
 </body>
 </html>

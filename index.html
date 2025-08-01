@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantID Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PlantID - Сканерлеу тарихы</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -35,6 +35,7 @@
             font-weight: 500;
             transition: all 0.2s ease;
             cursor: pointer;
+            border: 1px solid transparent;
         }
         
         .btn-primary {
@@ -57,347 +58,722 @@
             background: #e5e7eb;
         }
         
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .input {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            width: 100%;
+            background: white;
+            transition: all 0.3s ease;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
         
-        .stat-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
         
-        .stat-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        .modal-content {
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .accuracy-badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .accuracy-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .accuracy-yellow {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        
+        .accuracy-red {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .plant-image {
+            height: 180px;
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .plant-card:hover .plant-image {
+            transform: scale(1.05);
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(16, 185, 129, 0.2);
+            border-top-color: #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification-success {
+            background-color: #10b981;
+        }
+        
+        .notification-error {
+            background-color: #ef4444;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-        <!-- Navbar -->
-        <nav class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 flex items-center">
-                            <div class="bg-green-600 text-white w-8 h-8 rounded-md flex items-center justify-center font-bold">P</div>
-                            <span class="ml-2 text-xl font-bold text-green-700">PlantID</span>
-                        </div>
-                        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                            <a href="#" class="border-green-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Басты бет
-                            </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Сканерлеу
-                            </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Тарих
-                            </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Профиль
-                            </a>
-                        </div>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="bg-green-600 text-white w-8 h-8 rounded-md flex items-center justify-center font-bold">P</div>
+                        <span class="ml-2 text-xl font-bold text-green-700">PlantID</span>
                     </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                        <button class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
-                            <span class="sr-only">Хабарламалар</span>
-                            <i class="far fa-bell text-xl"></i>
-                        </button>
-                        <div class="ml-3 relative">
-                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center cursor-pointer">
-                                <span class="text-lg font-bold text-green-600">Қ</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="-mr-2 flex items-center sm:hidden">
-                        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
-                            <span class="sr-only">Open main menu</span>
-                            <i class="fas fa-bars text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Welcome Section -->
-            <div class="mb-8 animate-fade-in">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-                            Қайырлы күн, Қолданушы Аты! 👋
-                        </h1>
-                        <p class="text-gray-600 text-lg">Керемет бастама! Жаңа өсімдіктерді зерттеуді жалғастырыңыз! 🌿</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-right">
-                            <p class="text-sm text-gray-500">Соңғы кіру</p>
-                            <p class="text-sm font-medium text-gray-700">1.08.2025</p>
-                        </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                            <span class="text-xl font-bold text-green-600">Қ</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Total Scans -->
-                <div class="card bg-gradient-to-r from-green-500 to-green-600 text-white border-0 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 stat-card">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm">Жалпы сканерлеу</p>
-                            <p class="text-3xl font-bold">12</p>
-                            <p class="text-green-200 text-xs mt-1">+2 осы аптада</p>
-                        </div>
-                        <div class="relative">
-                            <i class="fas fa-camera-retro text-3xl text-green-200"></i>
-                            <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
-                                <span class="text-xs font-bold text-green-800">!</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- This Week -->
-                <div class="card bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 stat-card">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-blue-100 text-sm">Осы аптада</p>
-                            <p class="text-3xl font-bold">2</p>
-                            <p class="text-blue-200 text-xs mt-1">Белсенді аптаңыз!</p>
-                        </div>
-                        <i class="far fa-clock text-3xl text-blue-200"></i>
-                    </div>
-                </div>
-
-                <!-- Avg Accuracy -->
-                <div class="card bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 stat-card">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-purple-100 text-sm">Орташа дәлдік</p>
-                            <p class="text-3xl font-bold">92%</p>
-                            <p class="text-purple-200 text-xs mt-1">Жақсы!</p>
-                        </div>
-                        <div class="relative">
-                            <i class="fas fa-star text-3xl text-purple-200"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Unique Species -->
-                <div class="card bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 stat-card">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-orange-100 text-sm">Түрлі өсімдік</p>
-                            <p class="text-3xl font-bold">8</p>
-                            <p class="text-orange-200 text-xs mt-1">Коллекцияңызды кеңейтіңіз</p>
-                        </div>
-                        <i class="fas fa-seedling text-3xl text-orange-200"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <!-- New Scan -->
-                <a href="#" class="group">
-                    <div class="card hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-md group-hover:scale-105 bg-gradient-to-br from-green-50 to-green-100">
-                        <div class="p-6 text-center">
-                            <div class="relative mb-4">
-                                <i class="fas fa-camera text-5xl text-green-600 mx-auto transition-transform duration-300 group-hover:scale-110"></i>
-                                <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-bolt text-xs text-white"></i>
-                                </div>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">🌿 Жаңа сканерлеу</h3>
-                            <p class="text-gray-600">Өсімдіктің суретін түсіріп анықтаңыз</p>
-                            <div class="mt-3 text-sm text-green-600 font-medium">Дәл қазір сканерлеу →</div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- View History -->
-                <a href="#" class="group">
-                    <div class="card hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-md group-hover:scale-105 bg-gradient-to-br from-blue-50 to-blue-100">
-                        <div class="p-6 text-center">
-                            <i class="fas fa-history text-5xl text-blue-600 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"></i>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">📚 Тарих қарау</h3>
-                            <p class="text-gray-600">Бұрын сканерленген өсімдіктер</p>
-                            <div class="mt-3 text-sm text-blue-600 font-medium">12 сканерлеу →</div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Profile -->
-                <a href="#" class="group">
-                    <div class="card hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-md group-hover:scale-105 bg-gradient-to-br from-purple-50 to-purple-100">
-                        <div class="p-6 text-center">
-                            <i class="fas fa-user text-5xl text-purple-600 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"></i>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">👤 Профиль</h3>
-                            <p class="text-gray-600">Жеке ақпараттарды басқару</p>
-                            <div class="mt-3 text-sm text-purple-600 font-medium">Профильді өзгерту →</div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="card border-0 shadow-lg">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-chart-line text-green-600"></i>
-                            <h2 class="text-xl font-semibold">Соңғы белсенділік</h2>
-                        </div>
-                        <a href="#">
-                            <button class="text-sm text-green-600 hover:text-green-700 font-medium">Барлығын қарау →</button>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Басты бет
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Сканерлеу
+                        </a>
+                        <a href="#" class="border-green-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Тарих
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Профиль
                         </a>
                     </div>
-                    <p class="text-gray-600 mb-6">Жақында сканерленген өсімдіктер</p>
-
-                    <!-- Recent Scans -->
-                    <div class="space-y-4">
-                        <!-- Scan 1 -->
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-leaf text-xl text-green-700"></i>
-                                    </div>
-                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                        <span class="text-xs font-bold text-white">1</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Қызылша</p>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                                        <i class="far fa-calendar text-xs"></i>
-                                        2 күн бұрын
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-bullseye text-green-600 text-sm"></i>
-                                    <p class="text-sm font-medium text-green-600">96%</p>
-                                </div>
-                                <p class="text-xs text-gray-500">дәлдік</p>
-                            </div>
-                        </div>
-
-                        <!-- Scan 2 -->
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-leaf text-xl text-blue-700"></i>
-                                    </div>
-                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                        <span class="text-xs font-bold text-white">2</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Қызыл гүл</p>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                                        <i class="far fa-calendar text-xs"></i>
-                                        5 күн бұрын
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-bullseye text-green-600 text-sm"></i>
-                                    <p class="text-sm font-medium text-green-600">88%</p>
-                                </div>
-                                <p class="text-xs text-gray-500">дәлдік</p>
-                            </div>
-                        </div>
-
-                        <!-- Scan 3 -->
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="w-12 h-12 bg-yellow-200 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-leaf text-xl text-yellow-700"></i>
-                                    </div>
-                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                        <span class="text-xs font-bold text-white">3</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-gray-800">Сары раушан</p>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                                        <i class="far fa-calendar text-xs"></i>
-                                        1 апта бұрын
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-bullseye text-green-600 text-sm"></i>
-                                    <p class="text-sm font-medium text-green-600">92%</p>
-                                </div>
-                                <p class="text-xs text-gray-500">дәлдік</p>
-                            </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <button class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Хабарламалар</span>
+                        <i class="far fa-bell text-xl"></i>
+                    </button>
+                    <div class="ml-3 relative">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center cursor-pointer">
+                            <span class="text-lg font-bold text-green-600">Қ</span>
                         </div>
                     </div>
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-                    <div class="mt-6 text-center">
-                        <a href="#">
-                            <button class="btn btn-secondary w-full">
-                                <i class="fas fa-history mr-2"></i>
-                                Барлық тарихты қарау (12)
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header with Stats -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">📚 Сканерлеу тарихы</h1>
+                    <div class="flex gap-4 text-sm text-gray-600">
+                        <span>Барлығы: 12</span>
+                        <span>•</span>
+                        <span>Көрсетілген: 5</span>
+                        <span>•</span>
+                        <span>Орташа дәлдік: 89%</span>
+                    </div>
+                </div>
+
+                <!-- Export Button -->
+                <button id="exportBtn" class="btn btn-secondary flex items-center gap-2">
+                    <i class="fas fa-download text-sm"></i>
+                    CSV экспорт
+                </button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="grid md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="relative md:col-span-2">
+                    <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Өсімдік атын іздеу..."
+                        class="input pl-10 w-full"
+                    />
+                </div>
+
+                <!-- Sort -->
+                <select id="sortSelect" class="input">
+                    <option value="newest">Жаңадан ескіге</option>
+                    <option value="oldest">Ескіден жаңаға</option>
+                    <option value="accuracy">Дәлдік бойынша</option>
+                </select>
+
+                <!-- Filter -->
+                <select id="filterSelect" class="input">
+                    <option value="all">Барлығы</option>
+                    <option value="high-accuracy">Жоғары дәлдік (95%+)</option>
+                    <option value="recent">Соңғы апта</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Plant History List -->
+        <div class="grid gap-6">
+            <!-- Plant Card 1 -->
+            <div class="card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] plant-card">
+                <div class="p-6">
+                    <div class="grid md:grid-cols-4 gap-6 items-center">
+                        <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                src="https://images.unsplash.com/photo-1491147334573-44cbb4602074?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                                alt="Қызылша"
+                                class="plant-image"
+                            />
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xl font-semibold text-gray-800">Қызылша</h3>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-star text-green-600 text-sm"></i>
+                                    <span class="accuracy-badge accuracy-green">96% дәлдік</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">Beta vulgaris</p>
+                            <p class="text-gray-700 line-clamp-2">Қызылша - көпжылдық шөптесін өсімдік. Оның тамыры қызыл түсті болып келеді, дәмі тәтті. Ауруларды емдеуге қолданылады.</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <i class="far fa-calendar text-sm"></i>
+                                2 күн бұрын
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <button data-id="1" class="view-btn btn btn-secondary text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                <i class="far fa-eye mr-2"></i>
+                                Қарау
                             </button>
-                        </a>
+                            <button data-id="1" class="share-btn btn btn-secondary text-sm hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Бөлісу
+                            </button>
+                            <button data-id="1" class="delete-btn btn text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors">
+                                <i class="far fa-trash-alt mr-2"></i>
+                                Өшіру
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Achievements -->
-            <div class="card border-0 shadow-lg mt-8">
+            <!-- Plant Card 2 -->
+            <div class="card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] plant-card">
                 <div class="p-6">
-                    <div class="flex items-center gap-2 mb-4">
-                        <i class="fas fa-trophy text-yellow-600"></i>
-                        <h2 class="text-xl font-semibold">Жетістіктер</h2>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <!-- Achievement 1 -->
-                        <div class="text-center p-4 rounded-lg bg-green-50 border-2 border-green-200">
-                            <div class="text-2xl mb-2">🌱</div>
-                            <p class="text-sm font-medium">Бастаушы</p>
-                            <p class="text-xs text-gray-600">1+ сканерлеу</p>
+                    <div class="grid md:grid-cols-4 gap-6 items-center">
+                        <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                src="https://images.unsplash.com/photo-1470509037663-253afd7f0f51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                                alt="Сары раушан"
+                                class="plant-image"
+                            />
                         </div>
-                        
-                        <!-- Achievement 2 -->
-                        <div class="text-center p-4 rounded-lg bg-green-50 border-2 border-green-200">
-                            <div class="text-2xl mb-2">🌿</div>
-                            <p class="text-sm font-medium">Зерттеуші</p>
-                            <p class="text-xs text-gray-600">10+ сканерлеу</p>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xl font-semibold text-gray-800">Сары раушан</h3>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-chart-line text-yellow-600 text-sm"></i>
+                                    <span class="accuracy-badge accuracy-yellow">92% дәлдік</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">Rosa foetida</p>
+                            <p class="text-gray-700 line-clamp-2">Сары раушан - әсем гүлдері бар бұтақты өсімдік. Оның гүлдері сары түсті, хош иісті және ұзақ уақыт сақталады.</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <i class="far fa-calendar text-sm"></i>
+                                5 күн бұрын
+                            </div>
                         </div>
-                        
-                        <!-- Achievement 3 -->
-                        <div class="text-center p-4 rounded-lg bg-gray-50">
-                            <div class="text-2xl mb-2">🌳</div>
-                            <p class="text-sm font-medium">Сарапшы</p>
-                            <p class="text-xs text-gray-600">50+ сканерлеу</p>
-                        </div>
-                        
-                        <!-- Achievement 4 -->
-                        <div class="text-center p-4 rounded-lg bg-gray-50">
-                            <div class="text-2xl mb-2">🏆</div>
-                            <p class="text-sm font-medium">Шебер</p>
-                            <p class="text-xs text-gray-600">100+ сканерлеу</p>
+
+                        <div class="flex flex-col gap-2">
+                            <button data-id="2" class="view-btn btn btn-secondary text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                <i class="far fa-eye mr-2"></i>
+                                Қарау
+                            </button>
+                            <button data-id="2" class="share-btn btn btn-secondary text-sm hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Бөлісу
+                            </button>
+                            <button data-id="2" class="delete-btn btn text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors">
+                                <i class="far fa-trash-alt mr-2"></i>
+                                Өшіру
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <!-- Plant Card 3 -->
+            <div class="card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] plant-card">
+                <div class="p-6">
+                    <div class="grid md:grid-cols-4 gap-6 items-center">
+                        <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                src="https://images.unsplash.com/photo-1559563362-c667ba5f5480?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                                alt="Қарағат"
+                                class="plant-image"
+                            />
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xl font-semibold text-gray-800">Қарағат</h3>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-chart-line text-yellow-600 text-sm"></i>
+                                    <span class="accuracy-badge accuracy-yellow">90% дәлдік</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">Ribes nigrum</p>
+                            <p class="text-gray-700 line-clamp-2">Қарағат - дәмі қышқылтым жидектер беретін бұта. Ол денсаулыққа пайдалы витаминдерге бай, иммунитетті күшейтеді.</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <i class="far fa-calendar text-sm"></i>
+                                1 апта бұрын
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <button data-id="3" class="view-btn btn btn-secondary text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                <i class="far fa-eye mr-2"></i>
+                                Қарау
+                            </button>
+                            <button data-id="3" class="share-btn btn btn-secondary text-sm hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Бөлісу
+                            </button>
+                            <button data-id="3" class="delete-btn btn text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors">
+                                <i class="far fa-trash-alt mr-2"></i>
+                                Өшіру
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plant Card 4 -->
+            <div class="card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] plant-card">
+                <div class="p-6">
+                    <div class="grid md:grid-cols-4 gap-6 items-center">
+                        <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                                alt="Қызыл гүл"
+                                class="plant-image"
+                            />
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xl font-semibold text-gray-800">Қызыл гүл</h3>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-eye text-red-600 text-sm"></i>
+                                    <span class="accuracy-badge accuracy-red">88% дәлдік</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">Papaver rhoeas</p>
+                            <p class="text-gray-700 line-clamp-2">Қызыл гүл - көптеген мәдениеттерде символдық мағынасы бар көпжылдық шөптесін өсімдік. Ол өте әдемі және көзге шапшан.</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <i class="far fa-calendar text-sm"></i>
+                                2 апта бұрын
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <button data-id="4" class="view-btn btn btn-secondary text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                <i class="far fa-eye mr-2"></i>
+                                Қарау
+                            </button>
+                            <button data-id="4" class="share-btn btn btn-secondary text-sm hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Бөлісу
+                            </button>
+                            <button data-id="4" class="delete-btn btn text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors">
+                                <i class="far fa-trash-alt mr-2"></i>
+                                Өшіру
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plant Card 5 -->
+            <div class="card border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] plant-card">
+                <div class="p-6">
+                    <div class="grid md:grid-cols-4 gap-6 items-center">
+                        <div class="relative h-32 w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                                src="https://images.unsplash.com/photo-1525268771113-32d9e9021a97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                                alt="Алма ағашы"
+                                class="plant-image"
+                            />
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xl font-semibold text-gray-800">Алма ағашы</h3>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-star text-green-600 text-sm"></i>
+                                    <span class="accuracy-badge accuracy-green">97% дәлдік</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">Malus domestica</p>
+                            <p class="text-gray-700 line-clamp-2">Алма ағашы - жеміс беретін ағаш, оның жемісі - алма. Алма витаминге бай, денсаулыққа өте пайдалы.</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <i class="far fa-calendar text-sm"></i>
+                                3 апта бұрын
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <button data-id="5" class="view-btn btn btn-secondary text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                                <i class="far fa-eye mr-2"></i>
+                                Қарау
+                            </button>
+                            <button data-id="5" class="share-btn btn btn-secondary text-sm hover:bg-green-50 hover:text-green-700 transition-colors">
+                                <i class="fas fa-share-alt mr-2"></i>
+                                Бөлісу
+                            </button>
+                            <button data-id="5" class="delete-btn btn text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 transition-colors">
+                                <i class="far fa-trash-alt mr-2"></i>
+                                Өшіру
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center items-center gap-4 mt-8">
+            <button class="btn btn-secondary text-sm opacity-50 cursor-not-allowed">
+                Алғашқы
+            </button>
+
+            <button class="btn btn-secondary opacity-50 cursor-not-allowed">
+                <i class="fas fa-chevron-left text-sm"></i>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <span class="text-gray-600">1 / 2</span>
+                <span class="text-gray-400 text-sm">(12 жазба)</span>
+            </div>
+
+            <button class="btn btn-secondary">
+                <i class="fas fa-chevron-right text-sm"></i>
+            </button>
+
+            <button class="btn btn-secondary text-sm">
+                Соңғы
+            </button>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <h2 id="modalTitle" class="text-2xl font-bold">Қызылша</h2>
+                        <i class="fas fa-star text-green-600"></i>
+                    </div>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center">
+                        ×
+                    </button>
+                </div>
+
+                <p id="modalScientific" class="text-gray-600 italic mb-6">Beta vulgaris</p>
+
+                <div class="relative h-64 w-full rounded-lg overflow-hidden bg-gray-100 mb-6">
+                    <img
+                        id="modalImage"
+                        src="https://images.unsplash.com/photo-1491147334573-44cbb4602074?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                        alt="Қызылша"
+                        class="w-full h-full object-cover"
+                    />
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-star text-green-600"></i>
+                        <span class="accuracy-badge accuracy-green">96% дәлдік</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                        <i class="far fa-calendar text-sm"></i>
+                        2 күн бұрын
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-800 mb-2">📝 Сипаттама</h4>
+                    <p id="modalDescription" class="text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg">
+                        Қызылша - көпжылдық шөптесін өсімдік. Оның тамыры қызыл түсті болып келеді, дәмі тәтті. Қызылша витаминге, минералдарға және антиоксиданттарға бай. Ол қан қысымын төмендетуге, атлетикалық өнімділікті арттыруға және қабынуды азайтуға көмектеседі. Қызылшаны шикі, пісірілген, шырын немесе консервіленген түрде пайдалануға болады.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-1 flex items-center gap-2">🌍 Шығу тегі</h4>
+                        <p id="modalOrigin" class="text-gray-600">Орталық және Батыс Еуропа</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-1 flex items-center gap-2">☀️ Жарық</h4>
+                        <p id="modalSunlight" class="text-gray-600">Толық күн сәулесі</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-1 flex items-center gap-2">💧 Суару</h4>
+                        <p id="modalWater" class="text-gray-600">Орташа, топырақ ылғалды болуы керек</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-1 flex items-center gap-2">📈 Өсу қарқыны</h4>
+                        <p id="modalGrowth" class="text-gray-600">Орташа, 50-60 күнде піседі</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button id="closeModalBtn" class="btn btn-secondary flex-1">
+                        Жабу
+                    </button>
+                    <button id="modalShare" class="btn btn-primary flex-1">
+                        <i class="fas fa-share-alt mr-2"></i>
+                        Бөлісу
+                    </button>
+                    <button id="modalDelete" class="btn flex-1 bg-red-600 hover:bg-red-700 text-white">
+                        <i class="far fa-trash-alt mr-2"></i>
+                        Өшіру
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalScientific = document.getElementById('modalScientific');
+        const modalImage = document.getElementById('modalImage');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalOrigin = document.getElementById('modalOrigin');
+        const modalSunlight = document.getElementById('modalSunlight');
+        const modalWater = document.getElementById('modalWater');
+        const modalGrowth = document.getElementById('modalGrowth');
+        
+        // Plant data
+        const plants = [
+            {
+                id: 1,
+                name: "Қызылша",
+                scientific: "Beta vulgaris",
+                image: "https://images.unsplash.com/photo-1491147334573-44cbb4602074?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Қызылша - көпжылдық шөптесін өсімдік. Оның тамыры қызыл түсті болып келеді, дәмі тәтті. Қызылша витаминге, минералдарға және антиоксиданттарға бай. Ол қан қысымын төмендетуге, атлетикалық өнімділікті арттыруға және қабынуды азайтуға көмектеседі. Қызылшаны шикі, пісірілген, шырын немесе консервіленген түрде пайдалануға болады.",
+                origin: "Орталық және Батыс Еуропа",
+                sunlight: "Толық күн сәулесі",
+                water: "Орташа, топырақ ылғалды болуы керек",
+                growth: "Орташа, 50-60 күнде піседі",
+                accuracy: 96
+            },
+            {
+                id: 2,
+                name: "Сары раушан",
+                scientific: "Rosa foetida",
+                image: "https://images.unsplash.com/photo-1470509037663-253afd7f0f51?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Сары раушан - әсем гүлдері бар бұтақты өсімдік. Оның гүлдері сары түсті, хош иісті және ұзақ уақыт сақталады. Раушан гүлдері сәндік мақсаттарда кеңінен қолданылады, сондай-ақ парфюмерия өнеркәсібінде пайдаланылады. Раушанның көптеген түрлері бар, олардың кейбіреулері емдік қасиеттерге ие.",
+                origin: "Азия",
+                sunlight: "Жартылай көлеңке",
+                water: "Тұрақты ылғалдылық",
+                growth: "Баяу, 2-3 жылда толық өседі",
+                accuracy: 92
+            },
+            {
+                id: 3,
+                name: "Қарағат",
+                scientific: "Ribes nigrum",
+                image: "https://images.unsplash.com/photo-1559563362-c667ba5f5480?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Қарағат - дәмі қышқылтым жидектер беретін бұта. Ол денсаулыққа пайдалы витаминдерге бай, иммунитетті күшейтеді. Қарағат C витаминінің өте бай көзі болып табылады, сондай-ақ антиоксиданттарға бай. Ол конфитюр, шырын және дәрі-дәрмек ретінде де пайдаланылады.",
+                origin: "Еуропа және Азия",
+                sunlight: "Толық күн сәулесі",
+                water: "Жиі суару қажет",
+                growth: "Жылдам, 1-2 жылда жеміс береді",
+                accuracy: 90
+            }
+        ];
+
+        // Open modal
+        document.querySelectorAll('.view-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.getAttribute('data-id');
+                const plant = plants.find(p => p.id == id);
+                
+                if (plant) {
+                    modalTitle.textContent = plant.name;
+                    modalScientific.textContent = plant.scientific;
+                    modalImage.src = plant.image;
+                    modalDescription.textContent = plant.description;
+                    modalOrigin.textContent = plant.origin;
+                    modalSunlight.textContent = plant.sunlight;
+                    modalWater.textContent = plant.water;
+                    modalGrowth.textContent = plant.growth;
+                    
+                    modal.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+        
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Delete functionality
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.getAttribute('data-id');
+                const plantName = plants.find(p => p.id == id)?.name || 'өсімдік';
+                
+                if (confirm(`"${plantName}" сканерлеуді өшіруді қалайсыз ба?`)) {
+                    showNotification('Сканерлеу сәтті өшірілді', 'success');
+                    
+                    // Remove the plant card from UI
+                    const card = button.closest('.plant-card');
+                    if (card) {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(100px)';
+                        card.style.transition = 'all 0.5s ease';
+                        
+                        setTimeout(() => {
+                            card.remove();
+                        }, 500);
+                    }
+                }
+            });
+        });
+
+        // Share functionality
+        document.querySelectorAll('.share-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.getAttribute('data-id');
+                const plant = plants.find(p => p.id == id);
+                
+                if (plant) {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: `PlantID: ${plant.name}`,
+                            text: `Мен "${plant.name}" (${plant.scientific}) өсімдігін PlantID арқылы анықтадым!`,
+                            url: window.location.href,
+                        }).catch(console.error);
+                    } else {
+                        navigator.clipboard.writeText(`${plant.name} - ${plant.description.substring(0, 100)}...`);
+                        showNotification('Ақпарат көшірілді!', 'success');
+                    }
+                }
+            });
+        });
+
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            showNotification('Деректер CSV файлына экспортталды!', 'success');
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            document.querySelectorAll('.plant-card').forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const scientific = card.querySelector('p.italic').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || scientific.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

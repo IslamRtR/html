@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль - AgriRent KZ</title>
+    <title>Барлық техникалар - AgriRent KZ</title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         /* --- Global Styles & Variables --- */
@@ -16,16 +19,13 @@
             --primary-green: #2c5e1a;
             --dark-green: #224814;
             --light-green: #eaf3e8;
-            --danger-red: #dc3545;
-            --light-red: #f8d7da;
-            --success-green: #198754;
-            --light-success: #d1e7dd;
             --text-dark: #212529;
             --text-light: #6c757d;
             --background-color: #f8f9fa;
             --white: #ffffff;
             --border-color: #dee2e6;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
         }
 
@@ -34,169 +34,246 @@
             margin: 0;
             background-color: var(--background-color);
             color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 2rem 0;
             line-height: 1.6;
         }
 
-        /* --- Profile Form Container --- */
-        .profile-container {
+        .equipment-list-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .list-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--primary-green);
+        }
+
+        /* --- Filter Controls --- */
+        .filter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
             background-color: var(--white);
-            padding: 3rem;
+            padding: 1.5rem;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 550px;
-            text-align: center;
         }
 
-        .profile-container h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary-green);
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-form {
-            text-align: left;
-        }
-
-        /* --- Form Elements --- */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .form-group input {
-            width: 100%;
+        .search-input, .filter-select {
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
-            box-sizing: border-box;
+            min-width: 200px;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-
-        .form-group input:focus {
+        
+        .search-input:focus, .filter-select:focus {
             outline: none;
             border-color: var(--primary-green);
             box-shadow: 0 0 0 3px var(--light-green);
         }
 
-        /* --- Messages & Feedback --- */
-        .error-message, .success-message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-            text-align: center;
+        /* --- Listings Grid --- */
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
         }
 
-        .error-message {
-            background-color: var(--light-red);
-            color: var(--danger-red);
-            border: 1px solid var(--danger-red);
+        .listing-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
         }
 
-        .success-message {
-            background-color: var(--light-success);
-            color: var(--success-green);
-            border: 1px solid var(--success-green);
-        }
-
-        /* --- Button --- */
-        .profile-form button {
+        .listing-image {
             width: 100%;
-            padding: 1rem;
-            border: none;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .listing-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .listing-info h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+        
+        .listing-location, .listing-price {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .listing-location i, .listing-price i {
+            color: var(--primary-green);
+            margin-right: 0.5rem;
+        }
+
+        .listing-description {
+            flex-grow: 1;
+            margin: 1rem 0;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .listing-view-button {
+            display: block;
+            text-align: center;
             background-color: var(--primary-green);
             color: var(--white);
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 0.75rem;
             border-radius: 8px;
-            cursor: pointer;
+            text-decoration: none;
+            margin-top: auto;
+            font-weight: 600;
             transition: background-color 0.3s;
-            margin-top: 1rem;
         }
-
-        .profile-form button:hover:not(:disabled) {
+        
+        .listing-view-button:hover {
             background-color: var(--dark-green);
         }
         
-        .profile-form button:disabled {
-            background-color: #a5d6a7;
-            cursor: not-allowed;
+        /* --- Load More Button & Messages --- */
+        .button-container {
+            text-align: center;
+            margin-top: 3rem;
         }
         
-        /* --- Responsive --- */
-        @media (max-width: 600px) {
-            .profile-container {
-                padding: 2rem;
-                margin: 1rem;
-            }
-            .profile-container h2 {
-                font-size: 1.8rem;
+        .load-more-button {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white);
+            background-color: var(--primary-green);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .load-more-button:hover {
+            background-color: var(--dark-green);
+        }
+        
+        .no-equipment-found {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            padding: 4rem 0;
+        }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        <h2>Профиль</h2>
-        
-        <!-- Example of an error message -->
-        <!-- <div class="error-message">Профильді жаңарту кезінде қате шықты.</div> -->
-        
-        <!-- Example of a success message -->
-        <!-- <div class="success-message">Профиль сәтті жаңартылды!</div> -->
-        
-        <form class="profile-form">
-            <div class="form-group">
-                <label for="name">Аты-жөні:</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value="Ермек Серікұлы"
-                    required
-                />
-            </div>
+    <div class="equipment-list-container">
+        <h1 class="list-title">Барлық техникалар</h1>
 
-            <div class="form-group">
-                <label for="phone">Телефон:</label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value="+7 (707) 123 4567"
-                />
-            </div>
+        <!-- Filter and Sort Controls -->
+        <div class="filter-controls">
+            <input type="text" placeholder="Техниканы іздеу..." class="search-input" />
+            <select class="filter-select">
+                <option value="Барлығы">Барлығы</option>
+                <option value="Трактор">Трактор</option>
+                <option value="Комбайн">Комбайн</option>
+                <option value="Сепкіш">Сепкіш</option>
+                <option value="Соқа">Соқа</option>
+            </select>
+            <select class="filter-select">
+                <option value="name-asc">Аты бойынша (А-Я)</option>
+                <option value="name-desc">Аты бойынша (Я-А)</option>
+                <option value="price-asc">Бағасы бойынша (арзан)</option>
+                <option value="price-desc">Бағасы бойынша (қымбат)</option>
+                <option value="year-asc">Жылы бойынша (ескі)</option>
+                <option value="year-desc">Жылы бойынша (жаңа)</option>
+            </select>
+        </div>
 
-            <div class="form-group">
-                <label for="address">Мекенжай:</label>
-                <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value="Алматы қ., Абай к-сі, 50"
-                />
+        <!-- Check if equipment exists -->
+        <div class="listings-grid">
+            <!-- Example Item 1 -->
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1621243623094-34934a8b7964?q=80&w=2940&auto=format&fit=crop" alt="John Deere 8R" class="listing-image">
+                <div class="listing-info">
+                    <h3>John Deere 8R</h3>
+                    <p class="listing-location"><i class="fa-solid fa-location-dot"></i> Алматы</p>
+                    <p class="listing-price"><i class="fa-solid fa-tags"></i> 50 000 тг/күн</p>
+                    <p class="listing-description">Жоғары қуатты, заманауи трактор. Кез-келген ауыр жұмысқа жарамды...</p>
+                    <a href="#" class="listing-view-button">Толығырақ</a>
+                </div>
             </div>
+            <!-- Example Item 2 -->
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1625992534839-a85703244221?q=80&w=2940&auto=format&fit=crop" alt="Claas Tucano 450" class="listing-image">
+                <div class="listing-info">
+                    <h3>Claas Tucano 450</h3>
+                    <p class="listing-location"><i class="fa-solid fa-location-dot"></i> Шымкент</p>
+                    <p class="listing-price"><i class="fa-solid fa-tags"></i> 120 000 тг/күн</p>
+                    <p class="listing-description">Сенімді және өнімді комбайн. Егін жинау науқанына арналған тамаша таңдау...</p>
+                    <a href="#" class="listing-view-button">Толығырақ</a>
+                </div>
+            </div>
+            <!-- Example Item 3 -->
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce0687954?q=80&w=2940&auto=format&fit=crop" alt="Horsch Pronto 6 DC" class="listing-image">
+                <div class="listing-info">
+                    <h3>Horsch Pronto 6 DC</h3>
+                    <p class="listing-location"><i class="fa-solid fa-location-dot"></i> Астана</p>
+                    <p class="listing-price"><i class="fa-solid fa-tags"></i> 35 000 тг/күн</p>
+                    <p class="listing-description">Жоғары жылдамдықты дәнді дақыл сепкіш. Үлкен аумақтарға арналған...</p>
+                    <a href="#" class="listing-view-button">Толығырақ</a>
+                </div>
+            </div>
+            <!-- Add more example cards as needed -->
+            <div class="listing-card">
+                <img src="https://placehold.co/400x300/a5d6a7/2c5e1a?text=Техника+4" alt="Equipment 4" class="listing-image">
+                <div class="listing-info">
+                    <h3>New Holland T7</h3>
+                    <p class="listing-location"><i class="fa-solid fa-location-dot"></i> Қарағанды</p>
+                    <p class="listing-price"><i class="fa-solid fa-tags"></i> 45 000 тг/күн</p>
+                    <p class="listing-description">Көп функциялы және үнемді трактор. Орташа көлемді шаруашылықтар үшін...</p>
+                    <a href="#" class="listing-view-button">Толығырақ</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- "No equipment found" message (shown conditionally) -->
+        <!-- <p class="no-equipment-found">Іздеу критерийлеріңізге сәйкес техника табылмады.</p> -->
 
-            <button type="submit">
-                Сақтау
-            </button>
-        </form>
+        <!-- Load More Button (shown conditionally) -->
+        <div class="button-container">
+            <button class="load-more-button">Көбірек жүктеу</button>
+        </div>
     </div>
 
 </body>

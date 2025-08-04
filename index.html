@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriRent KZ - Ауыл шаруашылығы техникасын жалға алу</title>
-    
-    <!-- Font Awesome for social media icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <title>Кіру - AgriRent KZ</title>
+
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* --- Global Styles & Variables --- */
@@ -20,868 +17,151 @@
             --dark-green: #224814;
             --light-green: #eaf3e8;
             --primary-yellow: #ffc107;
-            --dark-yellow: #e0a800;
             --text-dark: #212529;
             --text-light: #6c757d;
-            --background-light: #f8f9fa;
+            --background-color: #f8f9fa;
             --white: #ffffff;
             --border-color: #dee2e6;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-            --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
-        }
-
-        html {
-            scroll-behavior: smooth;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            background-color: var(--white);
+            background-color: var(--background-color);
             color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
             line-height: 1.6;
         }
 
-        .home-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- Reusable Components --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        section {
-            padding: 5rem 0;
-        }
-
-        section h2 {
-            text-align: center;
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: var(--primary-green);
-        }
-
-        .cta-button {
-            padding: 0.8rem 1.8rem;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            border: 2px solid transparent;
-            text-align: center;
-        }
-
-        .cta-button.primary {
-            background-color: var(--primary-yellow);
-            color: var(--text-dark);
-        }
-
-        .cta-button.primary:hover {
-            background-color: var(--dark-yellow);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .cta-button.secondary {
-            background-color: transparent;
-            border-color: var(--primary-yellow);
-            color: var(--primary-yellow);
-        }
-        
-        .cta-button.secondary:hover {
-            background-color: var(--primary-yellow);
-            color: var(--text-dark);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* --- Header --- */
-        .app-header {
+        /* --- Authentication Form Container --- */
+        .auth-container {
             background-color: var(--white);
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-            background-color: rgba(255, 255, 255, 0.85);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-text {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: var(--primary-green);
-            text-decoration: none;
-        }
-
-        .main-nav {
-            display: flex;
-            align-items: center;
-            gap: 1.8rem;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 500;
-            transition: color 0.3s;
-            position: relative;
-            padding-bottom: 4px;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            background-color: var(--primary-green);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-green);
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-            left: 0;
-        }
-
-        .auth-button {
-            border: 1px solid var(--primary-green);
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .login-button {
-            background-color: transparent;
-            color: var(--primary-green);
-        }
-
-        .login-button:hover {
-            background-color: var(--light-green);
-        }
-
-        .register-button {
-            background-color: var(--primary-green);
-            color: var(--white);
-        }
-
-        .register-button:hover {
-            background-color: var(--dark-green);
-            border-color: var(--dark-green);
-        }
-
-        /* --- Main Content --- */
-        .main-content {
-            flex-grow: 1;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--white);
-            min-height: 600px;
-            padding: 0; /* Override section padding */
-        }
-        
-        .hero-background-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 1;
-            filter: brightness(0.5);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            padding: 2rem;
-        }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .subtitle {
-            font-size: 1.25rem;
-            margin-bottom: 2.5rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.9;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        /* Features Section */
-        .features-section {
-            background-color: var(--background-light);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: var(--white);
-            padding: 2.5rem 2rem;
+            padding: 3rem;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
             text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
         }
 
-        .feature-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-card p {
-            color: var(--text-light);
-        }
-
-        /* How It Works Section */
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            position: relative;
-        }
-        
-        .step {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary-green);
-            color: var(--white);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
+        .auth-title {
+            font-size: 2.2rem;
             font-weight: 700;
-            margin: 0 auto 1.5rem auto;
-            border: 4px solid var(--light-green);
+            color: var(--primary-green);
+            margin-top: 0;
+            margin-bottom: 2rem;
         }
-        
-        .step h3 {
-            font-size: 1.4rem;
+
+        form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
             margin-bottom: 0.5rem;
-        }
-        
-        .step p {
-            color: var(--text-light);
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
-        /* Latest Listings Section */
-        .latest-listings-section {
-            background-color: var(--background-light);
-        }
-        
-        .filter-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .search-input, .filter-select {
+        .form-group input {
+            width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
-            min-width: 200px;
-        }
-        
-        .listings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            box-sizing: border-box; /* Important for padding and width calculation */
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .listing-card {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
-        
-        .listing-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px var(--light-green);
         }
 
-        .listing-image {
+        .submit-button {
             width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .listing-info {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .listing-info h3 {
-            margin-top: 0;
-            font-size: 1.3rem;
-        }
-        
-        .listing-location, .listing-price {
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .listing-description {
-            flex-grow: 1;
-            margin: 1rem 0;
-            color: var(--text-dark);
-        }
-
-        .listing-view-button {
-            display: block;
-            text-align: center;
+            padding: 1rem;
+            border: none;
             background-color: var(--primary-green);
             color: var(--white);
-            padding: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             border-radius: 8px;
-            text-decoration: none;
-            margin-top: auto;
+            cursor: pointer;
             transition: background-color 0.3s;
         }
-        
-        .listing-view-button:hover {
+
+        .submit-button:hover {
             background-color: var(--dark-green);
         }
-        
-        .button-container {
-            text-align: center;
-            margin-top: 3rem;
-        }
-        
-        .load-more-button, .view-all-listings-button {
-            background-color: var(--primary-green);
-            color: var(--white);
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        
-        /* About Section */
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            font-size: 1.1rem;
+
+        .auth-link {
+            margin-top: 2rem;
             color: var(--text-light);
-        }
-        
-        .about-content p {
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Partners Section */
-        .partners-section {
-             background-color: var(--background-light);
-        }
-        .partners-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 3rem;
-        }
-        .partner-logo {
-            max-height: 60px;
-            filter: grayscale(100%);
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-        .partner-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
+            font-size: 0.95rem;
         }
 
-        /* Testimonials Section */
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .testimonial-card {
-            background: var(--light-green);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            border-left: 5px solid var(--primary-green);
-        }
-        .testimonial-card p {
-            margin: 0 0 1rem 0;
-            font-style: italic;
-        }
-        .testimonial-card span {
-            font-weight: 600;
+        .auth-link a {
             color: var(--primary-green);
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            background-color: var(--background-light);
-        }
-        .faq-items-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .faq-item {
-            background: var(--white);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border-color);
-        }
-        .faq-item summary {
-            padding: 1.5rem;
-            font-size: 1.2rem;
             font-weight: 600;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-item summary::-webkit-details-marker {
-            display: none;
-        }
-        .faq-item p {
-            padding: 0 1.5rem 1.5rem 1.5rem;
-            margin: 0;
-            color: var(--text-light);
-        }
-        .faq-icon {
-            transition: transform 0.3s;
-        }
-        .faq-item[open] summary .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Newsletter & CTA Sections */
-        .newsletter-section, .final-cta {
-            background-color: var(--primary-green);
-            color: var(--white);
-            text-align: center;
-        }
-        .newsletter-section h2, .final-cta h2 {
-            color: var(--white);
-        }
-        .newsletter-section p, .final-cta p {
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        .newsletter-form {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .newsletter-form input {
-            flex-grow: 1;
-            padding: 0.8rem 1rem;
-            border: none;
-            border-radius: 8px;
-        }
-        .newsletter-form button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--primary-yellow);
-            color: var(--text-dark);
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* --- Footer --- */
-        .app-footer {
-            background-color: var(--text-dark);
-            color: var(--white);
-            text-align: center;
-            padding: 3rem 2rem;
-        }
-        .footer-links {
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-        .footer-links a {
-            color: var(--white);
             text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-        .footer-links a:hover {
-            opacity: 1;
-        }
-        .social-media {
-            margin-bottom: 1.5rem;
-        }
-        .social-media a {
-            color: var(--white);
-            font-size: 1.5rem;
-            margin: 0 1rem;
-            opacity: 0.8;
-            transition: all 0.3s;
-        }
-        .social-media a:hover {
-            opacity: 1;
-            color: var(--primary-yellow);
-        }
-        .copyright-text {
-            font-size: 0.9rem;
-            opacity: 0.6;
         }
 
-        /* --- Responsive Design --- */
-        @media (max-width: 768px) {
-            section h2 {
-                font-size: 2.2rem;
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 500px) {
+            .auth-container {
+                padding: 2rem;
+                margin: 1rem;
             }
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .main-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-            }
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-            .filter-controls {
-                flex-direction: column;
-                align-items: stretch;
+            .auth-title {
+                font-size: 1.8rem;
             }
         }
+
     </style>
 </head>
 <body>
 
-    <div class="home-container">
-        <!-- Тақырып (Header) -->
-        <header class="app-header">
-            <div class="container header-content">
-                <a href="/" class="logo-text">AgriRent KZ</a>
-                <nav class="main-nav">
-                    <a href="#" class="nav-link">Басты бет</a>
-                    <a href="#equipment" class="nav-link">Техника</a>
-                    <a href="#about" class="nav-link">Біз туралы</a>
-                    <a href="#faq" class="nav-link">FAQ</a>
-                    <a href="#" class="auth-button login-button">Кіру</a>
-                    <a href="#" class="auth-button register-button">Тіркелу</a>
-                </nav>
+    <div class="auth-container">
+        <h2 class="auth-title">Кіру</h2>
+        <form>
+            <div class="form-group">
+                <label for="username">Пайдаланушы аты:</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                />
             </div>
-        </header>
-
-        <main class="main-content">
-
-            <!-- Басты беттің герой секциясы -->
-            <section class="hero-section">
-                <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?q=80&w=2874&auto=format&fit=crop" alt="Ауыл шаруашылығы алқабы" class="hero-background-image">
-                <div class="hero-content">
-                    <h1>Ауыл шаруашылығы техникасын <br /> жалға алу платформасы</h1>
-                    <p class="subtitle">Өз техникаңызды табыңыз немесе бос тұрған техникадан қосымша табыс табыңыз.</p>
-                    <div class="cta-buttons">
-                        <a href="#equipment" class="cta-button primary">Техниканы қарау</a>
-                        <a href="#" class="cta-button secondary">Техника қосу</a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Платформа мүмкіндіктері секциясы -->
-            <section class="features-section">
-                <div class="container">
-                    <h2>Біздің платформа мүмкіндіктері</h2>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">🚜</div>
-                            <h3>Техниканы жалға алу</h3>
-                            <p>Ауыл шаруашылығы жұмыстары үшін қажетті техниканы оңай табыңыз және жалға алыңыз.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">💰</div>
-                            <h3>Қосымша табыс</h3>
-                            <p>Өз техникаңызды жалға беріп, қосымша табыс табыңыз.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🔍</div>
-                            <h3>Ыңғайлы іздеу</h3>
-                            <p>Өзіңізге қажетті техниканы орналасқан жері мен бағасы бойынша іздеңіз.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">📅</div>
-                            <h3>Жоспарлау</h3>
-                            <p>Техниканы алдын-ала жоспарлап, қажетті уақытта қолданыңыз.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🔒</div>
-                            <h3>Қауіпсіз транзакциялар</h3>
-                            <p>Барлық операциялар қауіпсіздік хаттамаларымен қорғалған.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🤝</div>
-                            <h3>24/7 қолдау</h3>
-                            <p>Сұрақтарыңыз болса, біздің қолдау қызметі әрқашан көмектесуге дайын.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Қалай жұмыс істейді секциясы -->
-            <section id="terms" class="how-it-works-section">
-                <div class="container">
-                    <h2>Қалай жұмыс істейді</h2>
-                    <div class="steps-container">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <h3>Тіркеліңіз</h3>
-                            <p>Платформаға тіркеліп, жеке профиль жасаңыз.</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <h3>Техниканы таңдаңыз</h3>
-                            <p>Өзіңізге қажетті техниканы табыңыз немесе өз техникаңызды тіркеңіз.</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <h3>Байланысқа шығыңыз</h3>
-                            <p>Техника иесімен байланысып, жалға алу шарттарын талқылаңыз.</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">4</div>
-                            <h3>Пайдаланыңыз</h3>
-                            <p>Техниканы алып, жұмысыңызды бастаңыз.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Жаңа техникалар тізімі секциясы -->
-            <section id="equipment" class="latest-listings-section">
-                <div class="container">
-                    <h2>Жаңа техникалар</h2>
-                    <div class="filter-controls">
-                        <input type="text" placeholder="Техниканы іздеу..." class="search-input" />
-                        <select class="filter-select">
-                            <option>Барлық түрі</option>
-                            <option>Трактор</option>
-                            <option>Комбайн</option>
-                            <option>Сепкіш</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Сұрыптау</option>
-                            <option>Бағасы бойынша (арзан)</option>
-                            <option>Бағасы бойынша (қымбат)</option>
-                            <option>Жылы бойынша (жаңа)</option>
-                        </select>
-                    </div>
-
-                    <div class="listings-grid">
-                        <div class="listing-card">
-                            <img src="https://images.unsplash.com/photo-1621243623094-34934a8b7964?q=80&w=2940&auto=format&fit=crop" alt="John Deere Tractor" class="listing-image">
-                            <div class="listing-info">
-                                <h3>John Deere 8R</h3>
-                                <p class="listing-location">📍 Алматы</p>
-                                <p class="listing-price">💰 50 000 тг/күн</p>
-                                <p class="listing-description">Жоғары қуатты, заманауи трактор. Кез-келген ауыр жұмысқа жарамды...</p>
-                                <a href="#" class="listing-view-button">Толығырақ</a>
-                            </div>
-                        </div>
-                        <div class="listing-card">
-                            <img src="https://images.unsplash.com/photo-1625992534839-a85703244221?q=80&w=2940&auto=format&fit=crop" alt="Claas Combine" class="listing-image">
-                            <div class="listing-info">
-                                <h3>Claas Tucano 450</h3>
-                                <p class="listing-location">📍 Шымкент</p>
-                                <p class="listing-price">💰 120 000 тг/күн</p>
-                                <p class="listing-description">Сенімді және өнімді комбайн. Егін жинау науқанына арналған тамаша таңдау...</p>
-                                <a href="#" class="listing-view-button">Толығырақ</a>
-                            </div>
-                        </div>
-                        <div class="listing-card">
-                            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce0687954?q=80&w=2940&auto=format&fit=crop" alt="Seeder" class="listing-image" style="object-position: center;">
-                            <div class="listing-info">
-                                <h3>Horsch Pronto 6 DC</h3>
-                                <p class="listing-location">📍 Астана</p>
-                                <p class="listing-price">💰 35 000 тг/күн</p>
-                                <p class="listing-description">Жоғары жылдамдықты дәнді дақыл сепкіш. Үлкен аумақтарға арналған...</p>
-                                <a href="#" class="listing-view-button">Толығырақ</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="button-container">
-                        <a href="#" class="cta-button primary">Барлық техниканы көру</a>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Біз туралы секциясы -->
-            <section id="about" class="about-section">
-                <div class="container">
-                    <h2>Біз туралы</h2>
-                    <div class="about-content">
-                        <p>AgriRent KZ – Қазақстандағы ауыл шаруашылығы техникасын жалға алу және беруге арналған жетекші онлайн платформа. Біз фермерлер мен ауыл шаруашылығы кәсіпорындарына қажетті техниканы оңай табуға, сондай-ақ өз техникаларын жалға беріп, қосымша табыс табуға мүмкіндік береміз.</p>
-                        <p>Біздің миссиямыз – ауыл шаруашылығы саласындағы тиімділікті арттыру, ресурстарды оңтайлы пайдалануға ықпал ету. Біз қауіпсіз, сенімді және ыңғайлы қызмет көрсетуге басымдық береміз.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Серіктестер секциясы -->
-            <section class="partners-section">
-                <div class="container">
-                    <h2>Біздің серіктестер</h2>
-                    <div class="partners-grid">
-                        <img src="https://placehold.co/150x80/E0E0E0/333333?text=John+Deere" alt="John Deere Logo" class="partner-logo">
-                        <img src="https://placehold.co/150x80/E0E0E0/333333?text=Claas" alt="Claas Logo" class="partner-logo">
-                        <img src="https://placehold.co/150x80/E0E0E0/333333?text=Case+IH" alt="Case IH Logo" class="partner-logo">
-                        <img src="https://placehold.co/150x80/E0E0E0/333333?text=Kubota" alt="Kubota Logo" class="partner-logo">
-                        <img src="https://placehold.co/150x80/E0E0E0/333333?text=New+Holland" alt="New Holland Logo" class="partner-logo">
-                    </div>
-                </div>
-            </section>
-
-            <!-- Пікірлер секциясы -->
-            <section class="testimonials-section">
-                <div class="container">
-                    <h2>Біздің қолданушылар не дейді?</h2>
-                    <div class="testimonials-grid">
-                        <div class="testimonial-card">
-                            <p>"Бұл платформа арқылы қажетті техниканы тез таптым. Өте ыңғайлы және уақытты үнемдейді!"</p>
-                            <span>- Айгүл Е. (Астана)</span>
-                        </div>
-                        <div class="testimonial-card">
-                            <p>"Бос тұрған тракторымды жалға беріп, қосымша табыс тапқаныма қуаныштымын. Процесс оңай әрі қауіпсіз."</p>
-                            <span>- Қанат Б. (Шымкент)</span>
-                        </div>
-                        <div class="testimonial-card">
-                            <p>"Әртүрлі техника түрлерінің көптігі таң қалдырды. Дәл маған керегін таптым!"</p>
-                            <span>- Динара С. (Алматы)</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Жиі қойылатын сұрақтар секциясы -->
-            <section id="faq" class="faq-section">
-                <div class="container">
-                    <h2>Жиі қойылатын сұрақтар</h2>
-                    <div class="faq-items-container">
-                        <details class="faq-item">
-                            <summary><h3>Техниканы қалай жалға аламын?</h3><span class="faq-icon">▼</span></summary>
-                            <p>1. Платформаға тіркеліңіз. 2. "Техниканы қарау" бөлімінен қажетті техниканы іздеңіз. 3. Техника иесімен байланысып, жалға алу шарттарын талқылаңыз.</p>
-                        </details>
-                        <details class="faq-item">
-                            <summary><h3>Өз техникамды қалай тіркеймін?</h3><span class="faq-icon">▼</span></summary>
-                            <p>"Техника қосу" батырмасын басып, техникаңыз туралы толық мәліметтерді (түрі, моделі, бағасы, орналасқан жері, сипаттамасы) енгізіңіз.</p>
-                        </details>
-                        <details class="faq-item">
-                            <summary><h3>Төлем қалай жүзеге асырылады?</h3><span class="faq-icon">▼</span></summary>
-                            <p>Төлем шарттары техника иесі мен жалға алушы арасында тікелей келісіледі. Платформа тек байланыс орнатуға көмектеседі.</p>
-                        </details>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Соңғы CTA секциясы -->
-            <section class="final-cta">
-                <div class="container">
-                    <h2>Бүгін бастаңыз!</h2>
-                    <p>Ауыл шаруашылығы техникасын жалға алу және беру арқылы уақытыңыз бен ақшаңызды үнемдеңіз.</p>
-                    <div class="cta-buttons">
-                         <a href="#equipment" class="cta-button primary">Техниканы қарау</a>
-                         <a href="#" class="cta-button secondary">Тіркелу</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Футер -->
-        <footer class="app-footer">
-            <div class="container">
-                <div class="footer-links">
-                    <a href="#about">Біз туралы</a>
-                    <a href="#">Байланыс</a>
-                    <a href="#terms">Қалай жұмыс істейді</a>
-                    <a href="#faq">Жиі қойылатын сұрақтар</a>
-                    <a href="#equipment">Жаңа техникалар</a>
-                </div>
-                <div class="social-media">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-                <p class="copyright-text">&copy; 2025 AgriRent KZ. Барлық құқықтар қорғалған.</p>
+            <div class="form-group">
+                <label for="password">Құпия сөз:</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                />
             </div>
-        </footer>
+            <button type="submit" class="submit-button">Кіру</button>
+        </form>
+        <p class="auth-link">
+            Аккаунтыңыз жоқ па? <a href="#">Тіркелу</a>
+        </p>
     </div>
 
 </body>
